@@ -47,9 +47,22 @@ export class GameEngine {
   constructor(canvas: HTMLCanvasElement, config: MatchConfig) {
     this.state = createMatch(config)
     const world = WORLD[config.mapSize]
-    this.viewport = new Viewport(world.w, world.h)
+    // Maps are generated landscape; on portrait screens rotate the world 90°
+    // (transpose coordinates) so the same map fills the tall viewport instead
+    // of shrinking into a letterboxed band. Seed reproducibility is preserved.
+    const portrait = canvas.clientHeight > canvas.clientWidth
+    const worldW = portrait ? world.h : world.w
+    const worldH = portrait ? world.w : world.h
+    if (portrait) {
+      for (const planet of this.state.planets) {
+        const x = planet.x
+        planet.x = planet.y
+        planet.y = x
+      }
+    }
+    this.viewport = new Viewport(worldW, worldH)
     this.ctx = canvas.getContext('2d')!
-    this.starfield = createStarfield(config.seed, world.w, world.h)
+    this.starfield = createStarfield(config.seed, worldW, worldH)
     this.ai = createAiControllers(this.state)
     this.fxRng = createRng(`${config.seed}:fx`)
     this.hudSnapshot = this.buildHudSnapshot()
