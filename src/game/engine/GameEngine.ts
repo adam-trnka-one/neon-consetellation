@@ -76,6 +76,8 @@ export class GameEngine {
       },
       send: (sourceIds, targetId) => this.send(sourceIds, targetId),
       isHumanPlanet: (planet) => planet.owner === 0,
+      zoomAt: (x, y, factor) => this.viewport.zoomAt(x, y, factor),
+      panBy: (dx, dy) => this.viewport.panBy(dx, dy),
     })
     this.input.setBoxSelector((x1, y1, x2, y2) =>
       this.state.planets

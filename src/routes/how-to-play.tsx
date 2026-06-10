@@ -52,6 +52,7 @@ function HowToPlayPage() {
           <li>Shift/Ctrl-click to add planets to the selection, or drag a box on empty space.</li>
           <li>Click any other planet to launch from everything selected (your own planets get reinforced).</li>
           <li>Drag from one of your planets onto a target to send directly.</li>
+          <li>Scroll wheel to zoom in and out at the cursor.</li>
           <li>ESC or click empty space to deselect.</li>
         </ul>
       </Section>
@@ -59,8 +60,9 @@ function HowToPlayPage() {
       <Section title="Touch controls">
         <ul className="list-disc space-y-1 pl-5">
           <li>Tap one of your planets to select it, then tap a target to send.</li>
-          <li>Long-press and drag to box-select multiple planets.</li>
+          <li>Hold briefly, then drag to box-select multiple planets.</li>
           <li>Drag from your planet onto a target to send directly.</li>
+          <li>Pinch to zoom; drag on empty space to pan when zoomed in.</li>
           <li>Tap empty space to deselect.</li>
         </ul>
       </Section>
