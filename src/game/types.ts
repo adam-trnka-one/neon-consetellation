@@ -50,6 +50,10 @@ export interface Shockwave {
   y: number
   owner: Owner
   age: number
+  // 'capture' expands outward (default); 'ping' contracts onto a send target
+  kind?: 'capture' | 'ping'
+  // target planet radius, used by 'ping' to scale the contraction
+  radius?: number
 }
 
 export type MatchStatus = 'running' | 'paused' | 'won' | 'lost'

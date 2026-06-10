@@ -1,7 +1,7 @@
 import { SIM_DT } from '../constants'
 import type { FleetParticle, MatchState } from '../types'
 import type { Viewport } from '../engine/viewport'
-import { drawSelectionRing, drawShockwave } from './effects'
+import { drawSelectionRing, drawShockwave, drawTargetRing } from './effects'
 import { BG_COLOR, ownerColor } from './palette'
 import { drawGlow } from './sprites'
 import { drawStarfield, type Starfield } from './starfield'
@@ -78,6 +78,16 @@ export function render(
     ctx.textAlign = 'center'
     ctx.textBaseline = 'middle'
     ctx.fillText(String(Math.floor(planet.units)), planet.x, planet.y)
+  }
+
+  // mark every planet the player's fleets are currently heading to
+  const inboundTargets = new Set<number>()
+  for (const particle of state.particles) {
+    if (particle.owner === 0) inboundTargets.add(particle.targetId)
+  }
+  for (const id of inboundTargets) {
+    const planet = state.planets[id]
+    if (planet) drawTargetRing(ctx, planet.x, planet.y, planet.radius, ui.time)
   }
 
   for (const effect of state.effects) drawShockwave(ctx, effect)

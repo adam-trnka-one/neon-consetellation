@@ -1,6 +1,6 @@
-// Screen-space margins reserved for the HUD (top stats bar, bottom buttons)
+// Screen-space margins reserved for the HUD (top bar with stats + controls)
 // so the fitted world never hides under the controls.
-const INSET = { top: 44, bottom: 76, left: 10, right: 10 }
+const INSET = { top: 56, bottom: 16, left: 10, right: 10 }
 const MAX_ZOOM = 4
 
 function clampNum(v: number, lo: number, hi: number): number {

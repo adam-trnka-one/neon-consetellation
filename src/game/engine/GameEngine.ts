@@ -158,7 +158,19 @@ export class GameEngine {
 
   private send(sourceIds: number[], targetId: number): void {
     if (this.state.status !== 'running') return
+    const before = this.state.particles.length
     issueSend(this.state, sourceIds, targetId, 0, this.fxRng)
+    if (this.state.particles.length > before) {
+      const target = this.state.planets[targetId]
+      this.state.effects.push({
+        x: target.x,
+        y: target.y,
+        owner: 0,
+        age: 0,
+        kind: 'ping',
+        radius: target.radius,
+      })
+    }
   }
 
   private hitTest(worldX: number, worldY: number, inflatePx: number): Planet | null {
