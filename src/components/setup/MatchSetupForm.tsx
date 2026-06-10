@@ -2,23 +2,35 @@ import { useNavigate } from '@tanstack/react-router'
 import { useState } from 'react'
 import type { AiDifficulty, MapSize } from '../../game/types'
 import { randomSeedString } from '../../game/rng'
-import { Button } from '../ui/Button'
 
-const selectClass =
-  'w-full rounded-lg border border-white/15 bg-space-950 px-3 py-2 text-sm text-slate-100 focus:border-neon-cyan/60 focus:outline-none'
+const optionBase =
+  'rounded-xl border px-4 py-3 text-center font-display text-sm font-semibold transition-colors cursor-pointer'
+const optionIdle = 'border-white/15 bg-space-900 text-slate-200 hover:bg-white/5'
+const optionCyan =
+  'border-transparent bg-neon-cyan text-space-950 shadow-[0_0_18px_rgba(34,211,238,0.4)]'
+const optionViolet =
+  'border-transparent bg-neon-violet text-space-950 shadow-[0_0_18px_rgba(167,139,250,0.35)]'
+const optionVioletOutline = 'border-neon-violet/70 bg-neon-violet/15 text-slate-100'
+
+function SectionLabel({ children }: { children: string }) {
+  return (
+    <span className="mb-3 block font-display text-xs font-semibold uppercase tracking-[0.25em] text-neon-cyan">
+      {children}
+    </span>
+  )
+}
 
 export function MatchSetupForm() {
   const navigate = useNavigate()
   const [playerCount, setPlayerCount] = useState(2)
   const [aiDiffs, setAiDiffs] = useState<AiDifficulty[]>(['normal', 'normal', 'normal'])
   const [mapSize, setMapSize] = useState<MapSize>('medium')
-  const [useSeed, setUseSeed] = useState(false)
   const [seedText, setSeedText] = useState('')
 
   const aiCount = playerCount - 1
 
   const start = () => {
-    const seed = useSeed && seedText.trim() ? seedText.trim().toUpperCase() : randomSeedString()
+    const seed = seedText.trim() ? seedText.trim().toUpperCase() : randomSeedString()
     navigate({
       to: '/play/match',
       search: { seed, map: mapSize, ai: aiDiffs.slice(0, aiCount) },
@@ -31,86 +43,107 @@ export function MatchSetupForm() {
         e.preventDefault()
         start()
       }}
-      className="space-y-5"
+      className="space-y-9"
     >
-      <label className="block">
-        <span className="mb-1 block text-sm font-medium text-slate-300">Players</span>
-        <select
-          value={playerCount}
-          onChange={(e) => setPlayerCount(Number(e.target.value))}
-          className={selectClass}
-        >
-          {[2, 3, 4].map((n) => (
-            <option key={n} value={n}>
-              {n} players (you + {n - 1} AI)
-            </option>
-          ))}
-        </select>
-      </label>
-
-      <div className="space-y-3">
-        {Array.from({ length: aiCount }, (_, i) => (
-          <label key={i} className="block">
-            <span className="mb-1 block text-sm font-medium text-slate-300">
-              AI opponent {i + 1}
-            </span>
-            <select
-              value={aiDiffs[i]}
-              onChange={(e) => {
-                const next = aiDiffs.slice()
-                next[i] = e.target.value as AiDifficulty
-                setAiDiffs(next)
-              }}
-              className={selectClass}
-            >
-              <option value="easy">Easy</option>
-              <option value="normal">Normal</option>
-              <option value="hard">Hard</option>
-            </select>
-          </label>
-        ))}
-      </div>
-
-      <label className="block">
-        <span className="mb-1 block text-sm font-medium text-slate-300">Map size</span>
-        <select
-          value={mapSize}
-          onChange={(e) => setMapSize(e.target.value as MapSize)}
-          className={selectClass}
-        >
-          <option value="small">Small (9 planets)</option>
-          <option value="medium">Medium (14 planets)</option>
-          <option value="large">Large (20 planets)</option>
-        </select>
-      </label>
-
       <div>
-        <label className="flex items-center gap-2 text-sm text-slate-300">
-          <input
-            type="checkbox"
-            checked={useSeed}
-            onChange={(e) => setUseSeed(e.target.checked)}
-            className="size-4 accent-cyan-400"
-          />
-          Use a specific seed
-        </label>
-        {useSeed && (
-          <input
-            value={seedText}
-            onChange={(e) => setSeedText(e.target.value)}
-            placeholder="e.g. NEON42"
-            maxLength={32}
-            className={`mt-2 ${selectClass} font-mono uppercase placeholder:normal-case`}
-          />
-        )}
-        <p className="mt-1 text-xs text-slate-500">
-          The same seed always generates the same map.
+        <SectionLabel>Players</SectionLabel>
+        <div className="grid grid-cols-3 gap-3" role="radiogroup" aria-label="Players">
+          {[2, 3, 4].map((n) => (
+            <button
+              key={n}
+              type="button"
+              role="radio"
+              aria-checked={playerCount === n}
+              onClick={() => setPlayerCount(n)}
+              className={`${optionBase} ${playerCount === n ? optionCyan : optionIdle}`}
+            >
+              {n}
+            </button>
+          ))}
+        </div>
+        <p className="mt-2 text-xs text-slate-500">
+          You + {aiCount} AI opponent{aiCount > 1 ? 's' : ''}
         </p>
       </div>
 
-      <Button type="submit" className="w-full !py-3 text-base">
-        Start match
-      </Button>
+      <div>
+        <SectionLabel>AI difficulty</SectionLabel>
+        <div className="space-y-3">
+          {Array.from({ length: aiCount }, (_, i) => (
+            <div key={i} className="flex items-center gap-3">
+              <span className="w-10 shrink-0 font-mono text-xs text-slate-500">AI {i + 1}</span>
+              <div
+                className="grid flex-1 grid-cols-3 gap-2"
+                role="radiogroup"
+                aria-label={`AI ${i + 1} difficulty`}
+              >
+                {(['easy', 'normal', 'hard'] as const).map((d) => (
+                  <button
+                    key={d}
+                    type="button"
+                    role="radio"
+                    aria-checked={aiDiffs[i] === d}
+                    onClick={() => {
+                      const next = aiDiffs.slice()
+                      next[i] = d
+                      setAiDiffs(next)
+                    }}
+                    className={`${optionBase} !py-2.5 capitalize ${
+                      aiDiffs[i] === d ? optionVioletOutline : optionIdle
+                    }`}
+                  >
+                    {d}
+                  </button>
+                ))}
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+
+      <div>
+        <SectionLabel>Map size</SectionLabel>
+        <div className="grid grid-cols-3 gap-3" role="radiogroup" aria-label="Map size">
+          {(
+            [
+              ['small', 'Small'],
+              ['medium', 'Medium'],
+              ['large', 'Large'],
+            ] as const
+          ).map(([value, label]) => (
+            <button
+              key={value}
+              type="button"
+              role="radio"
+              aria-checked={mapSize === value}
+              onClick={() => setMapSize(value)}
+              className={`${optionBase} ${mapSize === value ? optionViolet : optionIdle}`}
+            >
+              {label}
+            </button>
+          ))}
+        </div>
+        <p className="mt-2 text-xs text-slate-500">9 / 14 / 20 planets</p>
+      </div>
+
+      <div>
+        <SectionLabel>Seed (optional)</SectionLabel>
+        <input
+          value={seedText}
+          onChange={(e) => setSeedText(e.target.value)}
+          placeholder="Leave blank for random"
+          maxLength={32}
+          className="w-full rounded-xl border border-white/15 bg-space-900 px-4 py-3 font-mono text-sm uppercase text-slate-100 placeholder:normal-case placeholder:text-slate-600 focus:border-neon-cyan/60 focus:outline-none"
+        />
+        <p className="mt-2 text-xs text-slate-500">Same seed + same settings = same map.</p>
+      </div>
+
+      <button
+        type="submit"
+        className="w-full cursor-pointer rounded-full bg-neon-cyan py-3.5 font-display text-sm font-bold uppercase tracking-[0.25em] text-space-950 shadow-[0_0_28px_rgba(34,211,238,0.45)] transition-colors hover:bg-cyan-300"
+      >
+        Launch
+      </button>
     </form>
   )
 }
