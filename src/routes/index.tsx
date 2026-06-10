@@ -22,7 +22,7 @@ export const Route = createFileRoute('/')({
 function LandingPage() {
   return (
     <main className="flex flex-1 flex-col items-center justify-center px-6 py-16 text-center">
-      <h1 className="font-display text-5xl font-bold tracking-widest text-neon-cyan glow-text sm:text-7xl">
+      <h1 className="font-display text-4xl font-bold tracking-widest text-neon-cyan glow-text sm:text-6xl md:text-7xl">
         NEON
         <br />
         CONSTELLATIONS
