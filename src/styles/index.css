@@ -1,0 +1,25 @@
+@import "tailwindcss";
+
+@theme {
+  --font-display: "Space Grotesk", system-ui, sans-serif;
+  --font-body: "DM Sans", system-ui, sans-serif;
+
+  --color-space-950: #07071a;
+  --color-space-900: #0b0b26;
+  --color-space-800: #141438;
+  --color-space-700: #1e1e4f;
+
+  --color-neon-cyan: #22d3ee;
+  --color-neon-magenta: #e879f9;
+  --color-neon-violet: #a78bfa;
+  --color-neon-lime: #a3e635;
+}
+
+html,
+body {
+  background: var(--color-space-950);
+}
+
+.glow-text {
+  text-shadow: 0 0 18px currentColor;
+}
