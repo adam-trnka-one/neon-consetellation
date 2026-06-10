@@ -4,8 +4,8 @@ import { LegalPage } from '../components/layout/LegalPage'
 export const Route = createFileRoute('/terms')({
   head: () => ({
     meta: [
-      { title: 'Terms of service — Neon Constellations' },
-      { name: 'description', content: 'Terms of service for Neon Constellations.' },
+      { title: 'Terms of service — Neon Space' },
+      { name: 'description', content: 'Terms of service for Neon Space.' },
     ],
   }),
   component: TermsPage,
@@ -15,7 +15,7 @@ function TermsPage() {
   return (
     <LegalPage title="Terms of service" updated="June 2026">
       <p>
-        By playing Neon Constellations you agree to these terms. The game is provided free of
+        By playing Neon Space you agree to these terms. The game is provided free of
         charge, "as is", without warranties of any kind.
       </p>
 
@@ -46,7 +46,7 @@ function TermsPage() {
 
       <h2>Contact</h2>
       <p>
-        Questions about these terms: <a href="mailto:privacy@neon.star">privacy@neon.star</a>{' '}
+        Questions about these terms: <a href="mailto:privacy@neonspace.game">privacy@neonspace.game</a>{' '}
         (placeholder contact address).
       </p>
     </LegalPage>

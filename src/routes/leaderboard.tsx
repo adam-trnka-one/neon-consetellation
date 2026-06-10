@@ -20,9 +20,9 @@ export const Route = createFileRoute('/leaderboard')({
   validateSearch: leaderboardSearchSchema,
   head: () => ({
     meta: [
-      { title: 'Leaderboard — Neon Constellations' },
-      { name: 'description', content: 'Global high scores for Neon Constellations.' },
-      { property: 'og:title', content: 'Neon Constellations leaderboard' },
+      { title: 'Leaderboard — Neon Space' },
+      { name: 'description', content: 'Global high scores for Neon Space.' },
+      { property: 'og:title', content: 'Neon Space leaderboard' },
     ],
   }),
   component: LeaderboardPage,

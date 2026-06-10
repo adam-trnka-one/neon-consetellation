@@ -3,10 +3,10 @@ import { createFileRoute, Link } from '@tanstack/react-router'
 export const Route = createFileRoute('/how-to-play')({
   head: () => ({
     meta: [
-      { title: 'How to play — Neon Constellations' },
+      { title: 'How to play — Neon Space' },
       {
         name: 'description',
-        content: 'Rules and controls for Neon Constellations: selection, fleets, capturing planets.',
+        content: 'Rules and controls for Neon Space: selection, fleets, capturing planets.',
       },
     ],
   }),

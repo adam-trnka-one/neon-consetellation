@@ -1,4 +1,4 @@
-# Neon Constellations
+# Neon Space
 
 A mobile-first, single-player real-time strategy game inspired by *Auralux: Constellations*.
 Own planets passively generate units; select your planets and tap a target to send half their
@@ -38,7 +38,7 @@ Without Supabase credentials the game is fully playable; the leaderboard shows a
 - `/how-to-play` — rules + controls
 - `/leaderboard` — global scores; tab/search/page/profile-drawer state is all in the URL
 - `/settings` — nickname for the leaderboard
-- `/privacy`, `/cookies`, `/terms` — legal pages (placeholder contact: privacy@neon.star)
+- `/privacy`, `/cookies`, `/terms` — legal pages (placeholder contact: privacy@neonspace.game)
 
 ## Architecture notes
 

@@ -5,7 +5,7 @@ import { SiteFooter } from '../components/layout/SiteFooter'
 export const Route = createRootRoute({
   head: () => ({
     meta: [
-      { title: 'Neon Constellations' },
+      { title: 'Neon Space' },
       {
         name: 'description',
         content:

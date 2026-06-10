@@ -11,7 +11,7 @@ export const Route = createFileRoute('/play/match')({
   validateSearch: matchSearchSchema,
   head: () => ({
     meta: [
-      { title: 'In match — Neon Constellations' },
+      { title: 'In match — Neon Space' },
       { name: 'description', content: 'Capture every planet in the constellation.' },
     ],
   }),

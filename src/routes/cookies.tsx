@@ -5,8 +5,8 @@ import { useConsent } from '../lib/consent/ConsentContext'
 export const Route = createFileRoute('/cookies')({
   head: () => ({
     meta: [
-      { title: 'Cookie policy — Neon Constellations' },
-      { name: 'description', content: 'Cookies and local storage used by Neon Constellations.' },
+      { title: 'Cookie policy — Neon Space' },
+      { name: 'description', content: 'Cookies and local storage used by Neon Space.' },
     ],
   }),
   component: CookiesPage,
@@ -17,7 +17,7 @@ function CookiesPage() {
   return (
     <LegalPage title="Cookie policy" updated="June 2026">
       <p>
-        Neon Constellations uses no traditional tracking cookies. We use your browser's{' '}
+        Neon Space uses no traditional tracking cookies. We use your browser's{' '}
         <strong>local storage</strong> for a small set of strictly necessary values, and we gate
         any optional categories behind your consent.
       </p>
@@ -54,7 +54,7 @@ function CookiesPage() {
           Cookie settings
         </button>{' '}
         (also linked in the footer of every page). Questions:{' '}
-        <a href="mailto:privacy@neon.star">privacy@neon.star</a>.
+        <a href="mailto:privacy@neonspace.game">privacy@neonspace.game</a>.
       </p>
     </LegalPage>
   )

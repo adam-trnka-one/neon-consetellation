@@ -13,7 +13,7 @@ export function ShareCard({ result, score }: { result: MatchResult; score: numbe
   const sorted = [...result.breakdown].sort((a, b) => b.planets - a.planets || b.units - a.units)
 
   const shareText = [
-    `Neon Constellations — I ${result.won ? 'won' : 'lost'} in ${result.durationS}s on a ${result.config.mapSize} map (seed ${result.config.seed})${score > 0 ? ` — score ${score}` : ''}`,
+    `Neon Space — I ${result.won ? 'won' : 'lost'} in ${result.durationS}s on a ${result.config.mapSize} map (seed ${result.config.seed})${score > 0 ? ` — score ${score}` : ''}`,
     ...sorted.map(
       (p) =>
         `${slotName(p.slot, p.kind, p.difficulty)}: ${p.planets} planets, ${p.units} units, ${p.fleets} fleets`,
@@ -23,7 +23,7 @@ export function ShareCard({ result, score }: { result: MatchResult; score: numbe
   const share = async () => {
     try {
       if (navigator.share) {
-        await navigator.share({ title: 'Neon Constellations', text: shareText })
+        await navigator.share({ title: 'Neon Space', text: shareText })
         return
       }
     } catch {

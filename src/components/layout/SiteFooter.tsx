@@ -6,7 +6,7 @@ export function SiteFooter() {
   return (
     <footer className="border-t border-white/10 px-6 py-6 text-sm text-slate-400">
       <div className="mx-auto flex max-w-4xl flex-col items-center gap-3 sm:flex-row sm:justify-between">
-        <span className="font-display text-slate-500">Neon Constellations</span>
+        <span className="font-display text-slate-500">Neon Space</span>
         <nav className="flex flex-wrap items-center justify-center gap-x-5 gap-y-2">
           <Link to="/how-to-play" className="hover:text-slate-200">
             How to play

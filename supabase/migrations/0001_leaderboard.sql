@@ -1,4 +1,4 @@
--- Neon Constellations leaderboard schema.
+-- Neon Space leaderboard schema.
 --
 -- RLS tradeoff: the app uses the anon key with no auth, so policies can only
 -- constrain row *shape* (CHECK constraints, append-only scores), not row

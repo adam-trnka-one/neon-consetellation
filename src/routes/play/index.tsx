@@ -4,7 +4,7 @@ import { MatchSetupForm } from '../../components/setup/MatchSetupForm'
 export const Route = createFileRoute('/play/')({
   head: () => ({
     meta: [
-      { title: 'New match — Neon Constellations' },
+      { title: 'New match — Neon Space' },
       { name: 'description', content: 'Set up a match: players, AI difficulty, map size and seed.' },
     ],
   }),

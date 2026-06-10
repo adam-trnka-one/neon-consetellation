@@ -8,7 +8,7 @@ import { leaderboardConfigured } from '../lib/supabase'
 export const Route = createFileRoute('/settings')({
   head: () => ({
     meta: [
-      { title: 'Settings — Neon Constellations' },
+      { title: 'Settings — Neon Space' },
       { name: 'description', content: 'Choose how your name appears on the global leaderboard.' },
     ],
   }),

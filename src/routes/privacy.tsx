@@ -4,8 +4,8 @@ import { LegalPage } from '../components/layout/LegalPage'
 export const Route = createFileRoute('/privacy')({
   head: () => ({
     meta: [
-      { title: 'Privacy policy — Neon Constellations' },
-      { name: 'description', content: 'How Neon Constellations handles your data.' },
+      { title: 'Privacy policy — Neon Space' },
+      { name: 'description', content: 'How Neon Space handles your data.' },
     ],
   }),
   component: PrivacyPage,
@@ -15,7 +15,7 @@ function PrivacyPage() {
   return (
     <LegalPage title="Privacy policy" updated="June 2026">
       <p>
-        Neon Constellations is a free browser game. We collect as little data as possible and we
+        Neon Space is a free browser game. We collect as little data as possible and we
         never sell it. This policy explains what we store, why, and your rights under the GDPR.
       </p>
 
@@ -53,13 +53,13 @@ function PrivacyPage() {
       <p>
         You may request access to, correction of, or deletion of your leaderboard data (identified
         by your anonymous player ID, visible in your browser's local storage). Contact us at{' '}
-        <a href="mailto:privacy@neon.star">privacy@neon.star</a> and we'll respond within 30 days.
+        <a href="mailto:privacy@neonspace.game">privacy@neonspace.game</a> and we'll respond within 30 days.
         You also have the right to lodge a complaint with your local supervisory authority.
       </p>
 
       <h2>Contact</h2>
       <p>
-        Questions about this policy: <a href="mailto:privacy@neon.star">privacy@neon.star</a>{' '}
+        Questions about this policy: <a href="mailto:privacy@neonspace.game">privacy@neonspace.game</a>{' '}
         (placeholder contact address).
       </p>
     </LegalPage>
