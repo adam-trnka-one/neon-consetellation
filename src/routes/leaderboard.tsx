@@ -1,5 +1,6 @@
 import { createFileRoute, useNavigate } from '@tanstack/react-router'
 import { useEffect, useMemo, useState } from 'react'
+import { PageShell } from '../components/layout/PageShell'
 import { LeaderboardTable } from '../components/leaderboard/LeaderboardTable'
 import { NicknameSearch } from '../components/leaderboard/NicknameSearch'
 import { PlayerProfileDrawer } from '../components/leaderboard/PlayerProfileDrawer'
@@ -88,27 +89,29 @@ function LeaderboardPage() {
   }, [myPlayerId, search.tab])
 
   return (
-    <main className="mx-auto w-full max-w-3xl flex-1 px-4 py-12 sm:px-6">
-      <h1 className="font-display text-3xl font-bold text-slate-100">Leaderboard</h1>
-
+    <PageShell
+      title="Leaderboard"
+      subtitle="Global high scores — climb the constellation."
+      maxWidth="max-w-3xl"
+    >
       {!leaderboardConfigured ? (
-        <p className="mt-6 rounded-xl border border-white/10 bg-space-900 p-5 text-slate-400">
+        <p className="rounded-xl border border-white/10 bg-space-900 p-5 text-slate-400">
           The global leaderboard isn't configured in this build (missing Supabase credentials).
           Your matches still work — scores just can't be submitted.
         </p>
       ) : (
         <>
-          <div className="mt-6 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-            <div className="flex rounded-lg border border-white/10 p-1" role="tablist">
+          <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+            <div className="flex w-fit rounded-full border border-white/15 p-1" role="tablist">
               {(['single', 'multi'] as const).map((tab) => (
                 <button
                   key={tab}
                   role="tab"
                   aria-selected={search.tab === tab}
                   onClick={() => setSearch({ tab, page: 1 })}
-                  className={`rounded-md px-4 py-1.5 font-display text-sm font-semibold transition-colors cursor-pointer ${
+                  className={`rounded-full px-5 py-2 font-display text-xs font-bold uppercase tracking-wider transition-colors cursor-pointer ${
                     search.tab === tab
-                      ? 'bg-neon-cyan/15 text-neon-cyan'
+                      ? 'bg-neon-cyan text-space-950 shadow-[0_0_18px_rgba(34,211,238,0.4)]'
                       : 'text-slate-400 hover:text-slate-200'
                   }`}
                 >
@@ -130,7 +133,7 @@ function LeaderboardPage() {
             </div>
           )}
 
-          <div className="mt-4 overflow-hidden rounded-xl border border-white/10 bg-space-900">
+          <div className="mt-4 overflow-hidden rounded-2xl border border-white/10 bg-space-900/80 backdrop-blur-sm">
             {search.tab === 'multi' ? (
               <p className="p-8 text-center text-slate-500">
                 Multiplayer is coming in a later phase — no results here yet.
@@ -183,6 +186,6 @@ function LeaderboardPage() {
           )}
         </>
       )}
-    </main>
+    </PageShell>
   )
 }

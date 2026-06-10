@@ -1,4 +1,5 @@
 import { createFileRoute, Link } from '@tanstack/react-router'
+import { PageShell } from '../components/layout/PageShell'
 
 export const Route = createFileRoute('/how-to-play')({
   head: () => ({
@@ -15,8 +16,10 @@ export const Route = createFileRoute('/how-to-play')({
 
 function Section({ title, children }: { title: string; children: React.ReactNode }) {
   return (
-    <section className="mt-8">
-      <h2 className="font-display text-xl font-semibold text-neon-cyan">{title}</h2>
+    <section className="mt-10 first:mt-0">
+      <h2 className="font-display text-xs font-semibold uppercase tracking-[0.25em] text-neon-cyan">
+        {title}
+      </h2>
       <div className="mt-3 space-y-2 text-slate-300">{children}</div>
     </section>
   )
@@ -24,9 +27,11 @@ function Section({ title, children }: { title: string; children: React.ReactNode
 
 function HowToPlayPage() {
   return (
-    <main className="mx-auto w-full max-w-2xl flex-1 px-6 py-12">
-      <h1 className="font-display text-3xl font-bold text-slate-100">How to play</h1>
-
+    <PageShell
+      title="How to play"
+      subtitle="Rules and controls reference."
+      maxWidth="max-w-2xl"
+    >
       <Section title="Goal">
         <p>
           Capture <strong>every planet</strong> on the map. You lose when you own no planets and
@@ -91,14 +96,14 @@ function HowToPlayPage() {
         </p>
       </Section>
 
-      <div className="mt-10">
+      <div className="mt-12">
         <Link
           to="/play"
-          className="inline-block rounded-xl border border-neon-cyan/60 bg-neon-cyan/15 px-6 py-2.5 font-display font-semibold text-neon-cyan transition-colors hover:bg-neon-cyan/25"
+          className="inline-block rounded-full bg-neon-cyan px-8 py-3 font-display text-sm font-bold uppercase tracking-[0.25em] text-space-950 shadow-[0_0_24px_rgba(34,211,238,0.45)] transition-colors hover:bg-cyan-300"
         >
           Start a match
         </Link>
       </div>
-    </main>
+    </PageShell>
   )
 }

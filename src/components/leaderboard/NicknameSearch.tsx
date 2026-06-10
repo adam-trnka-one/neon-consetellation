@@ -25,7 +25,7 @@ export function NicknameSearch({
         onChange={(e) => setText(e.target.value)}
         placeholder="Search nickname…"
         maxLength={24}
-        className="w-full flex-1 rounded-lg border border-white/15 bg-space-950 px-3 py-2 text-sm text-slate-100 placeholder:text-slate-600 focus:border-neon-cyan/60 focus:outline-none sm:w-56"
+        className="w-full flex-1 rounded-xl border border-white/15 bg-space-900 px-4 py-2.5 text-sm text-slate-100 placeholder:text-slate-600 focus:border-neon-cyan/60 focus:outline-none sm:w-56"
       />
       <Button type="submit" variant="ghost">
         Search

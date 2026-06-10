@@ -1,6 +1,6 @@
 import { createFileRoute } from '@tanstack/react-router'
 import { useState } from 'react'
-import { Button } from '../components/ui/Button'
+import { PageShell } from '../components/layout/PageShell'
 import { getLocalNickname, getOrCreatePlayerId, setLocalNickname } from '../lib/identity'
 import { updateNickname } from '../lib/leaderboard'
 import { leaderboardConfigured } from '../lib/supabase'
@@ -46,41 +46,44 @@ function SettingsPage() {
   }
 
   return (
-    <main className="mx-auto w-full max-w-md flex-1 px-6 py-12">
-      <h1 className="font-display text-3xl font-bold text-slate-100">Settings</h1>
-      <p className="mt-2 text-sm text-slate-400">
-        Your identity is an anonymous ID stored on this device. The nickname controls how you
-        appear on the global leaderboard.
-      </p>
-
+    <PageShell
+      title="Settings"
+      subtitle="Your identity is an anonymous ID stored on this device. The nickname controls how you appear on the global leaderboard."
+    >
       <form
         onSubmit={(e) => {
           e.preventDefault()
           save()
         }}
-        className="mt-8 space-y-4"
+        className="space-y-6"
       >
-        <label className="block">
-          <span className="mb-1 block text-sm font-medium text-slate-300">Nickname</span>
+        <div>
+          <span className="mb-3 block font-display text-xs font-semibold uppercase tracking-[0.25em] text-neon-cyan">
+            Nickname
+          </span>
           <input
             value={nickname}
             onChange={(e) => setNickname(e.target.value)}
             placeholder="Anonymous"
             minLength={2}
             maxLength={24}
-            className="w-full rounded-lg border border-white/15 bg-space-950 px-3 py-2 text-sm text-slate-100 placeholder:text-slate-600 focus:border-neon-cyan/60 focus:outline-none"
+            className="w-full rounded-xl border border-white/15 bg-space-900 px-4 py-3 text-sm text-slate-100 placeholder:text-slate-600 focus:border-neon-cyan/60 focus:outline-none"
           />
-          <span className="mt-1 block text-xs text-slate-500">2–24 characters.</span>
-        </label>
-        <Button type="submit" disabled={status === 'saving'}>
+          <p className="mt-2 text-xs text-slate-500">2–24 characters.</p>
+        </div>
+        <button
+          type="submit"
+          disabled={status === 'saving'}
+          className="cursor-pointer rounded-full bg-neon-cyan px-8 py-3 font-display text-sm font-bold uppercase tracking-[0.25em] text-space-950 shadow-[0_0_24px_rgba(34,211,238,0.45)] transition-colors hover:bg-cyan-300 disabled:opacity-50"
+        >
           {status === 'saving' ? 'Saving…' : 'Save nickname'}
-        </Button>
+        </button>
         {message && (
           <p className={`text-sm ${status === 'error' ? 'text-rose-400' : 'text-slate-300'}`}>
             {message}
           </p>
         )}
       </form>
-    </main>
+    </PageShell>
   )
 }
