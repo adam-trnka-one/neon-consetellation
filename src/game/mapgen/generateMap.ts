@@ -68,6 +68,7 @@ export function generateMap(config: MatchConfig, rng: Rng): Planet[] {
       units: isStart ? START_UNITS : randInt(rng, lo, hi),
       cap: stats.cap,
       regen: stats.regen,
+      level: 1,
     }
   })
 }

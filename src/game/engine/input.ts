@@ -12,17 +12,16 @@ export interface InputDelegate {
 }
 
 const DRAG_THRESHOLD_MOUSE_PX = 8
-// fingers wobble more than mice; don't let that cancel a long-press
-const DRAG_THRESHOLD_TOUCH_PX = 14
-const LONG_PRESS_MS = 250
+// fingers wobble more than mice before a drag should count
+const DRAG_THRESHOLD_TOUCH_PX = 12
 const TOUCH_HIT_INFLATE = 16
 
 type Mode = 'idle' | 'pending' | 'box' | 'dragSend' | 'pan' | 'pinch'
 
 // Pointer-event state machine handling tap-select, shift/ctrl multi-select,
-// drag-box (mouse on empty space, long-press on touch), drag-to-send,
-// tap-target launching, one-finger map panning (touch), pinch-to-zoom and
-// wheel zoom.
+// immediate drag-box on empty space (mouse and touch), drag-to-send,
+// tap-target launching, pinch-to-zoom with two-finger pan, middle/right
+// button pan and wheel zoom.
 export class InputController {
   boxRect: { x1: number; y1: number; x2: number; y2: number } | null = null
   dragLine: { sx: number; sy: number; x: number; y: number } | null = null
@@ -35,7 +34,6 @@ export class InputController {
   private lastY = 0
   private downPlanet: Planet | null = null
   private isTouch = false
-  private longPressTimer = 0
   private pinchDist = 0
   private pinchMid = { x: 0, y: 0 }
   // after a pinch ends, swallow the leftover pointer so it can't fire a tap
@@ -51,16 +49,17 @@ export class InputController {
     canvas.addEventListener('pointerup', this.onUp)
     canvas.addEventListener('pointercancel', this.onCancel)
     canvas.addEventListener('wheel', this.onWheel, { passive: false })
+    canvas.addEventListener('contextmenu', this.onContextMenu)
     window.addEventListener('keydown', this.onKey)
   }
 
   destroy(): void {
-    clearTimeout(this.longPressTimer)
     this.canvas.removeEventListener('pointerdown', this.onDown)
     this.canvas.removeEventListener('pointermove', this.onMove)
     this.canvas.removeEventListener('pointerup', this.onUp)
     this.canvas.removeEventListener('pointercancel', this.onCancel)
     this.canvas.removeEventListener('wheel', this.onWheel)
+    this.canvas.removeEventListener('contextmenu', this.onContextMenu)
     window.removeEventListener('keydown', this.onKey)
   }
 
@@ -94,27 +93,20 @@ export class InputController {
     this.downY = pos.y
     this.lastX = pos.x
     this.lastY = pos.y
+
+    // middle/right mouse button drags pan the map
+    if (e.pointerType === 'mouse' && e.button !== 0) {
+      this.mode = 'pan'
+      this.downPlanet = null
+      return
+    }
+
     const world = this.delegate.screenToWorld(pos.x, pos.y)
     this.downPlanet = this.delegate.hitTest(world.x, world.y, this.hitInflate())
     this.mode = 'pending'
-
-    if (this.isTouch) {
-      clearTimeout(this.longPressTimer)
-      this.longPressTimer = window.setTimeout(() => {
-        if (this.mode === 'pending') {
-          this.enterBoxMode()
-          try {
-            navigator.vibrate?.(15)
-          } catch {
-            // vibration unsupported
-          }
-        }
-      }, LONG_PRESS_MS)
-    }
   }
 
   private enterPinch(): void {
-    clearTimeout(this.longPressTimer)
     this.mode = 'pinch'
     this.boxRect = null
     this.dragLine = null
@@ -154,17 +146,12 @@ export class InputController {
     if (this.mode === 'pending') {
       const moved = Math.hypot(pos.x - this.downX, pos.y - this.downY) > this.dragThreshold()
       if (!moved) return
-      clearTimeout(this.longPressTimer)
       if (this.downPlanet && this.delegate.isHumanPlanet(this.downPlanet)) {
         this.mode = 'dragSend'
-      } else if (this.isTouch) {
-        // one-finger drag on empty space (or a planet you don't own) pans the map
-        this.mode = 'pan'
-      } else if (!this.downPlanet) {
-        this.enterBoxMode()
       } else {
-        this.mode = 'idle'
-        this.downPlanet = null
+        // dragging anywhere else immediately starts a selection box;
+        // panning is two fingers (touch) or middle/right button (mouse)
+        this.enterBoxMode()
       }
     }
 
@@ -184,7 +171,6 @@ export class InputController {
 
   private onUp = (e: PointerEvent) => {
     this.pointers.delete(e.pointerId)
-    clearTimeout(this.longPressTimer)
 
     if (this.mode === 'pinch') {
       if (this.pointers.size < 2) {
@@ -225,7 +211,6 @@ export class InputController {
 
   private onCancel = (e: PointerEvent) => {
     this.pointers.delete(e.pointerId)
-    clearTimeout(this.longPressTimer)
     if (this.pointers.size === 0) {
       this.mode = 'idle'
       this.suppressUntilEmpty = false
@@ -238,6 +223,10 @@ export class InputController {
     e.preventDefault()
     const pos = this.canvasPos(e)
     this.delegate.zoomAt(pos.x, pos.y, Math.exp(-e.deltaY * 0.0015))
+  }
+
+  private onContextMenu = (e: Event) => {
+    e.preventDefault()
   }
 
   private onKey = (e: KeyboardEvent) => {

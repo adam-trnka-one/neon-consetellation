@@ -78,9 +78,9 @@ export function MatchSetupForm() {
           onChange={(e) => setMapSize(e.target.value as MapSize)}
           className={selectClass}
         >
-          <option value="small">Small (12 planets)</option>
-          <option value="medium">Medium (20 planets)</option>
-          <option value="large">Large (30 planets)</option>
+          <option value="small">Small (9 planets)</option>
+          <option value="medium">Medium (14 planets)</option>
+          <option value="large">Large (20 planets)</option>
         </select>
       </label>
 

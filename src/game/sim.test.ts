@@ -41,7 +41,7 @@ describe('map generation', () => {
       expect(starts).toHaveLength(1)
       expect(starts[0].size).toBe('large')
     }
-    expect(state.planets).toHaveLength(12)
+    expect(state.planets).toHaveLength(9)
   })
 })
 
@@ -106,6 +106,46 @@ describe('simulation', () => {
     }
     expect(target.owner).toBe(0)
     expect(target.units).toBeGreaterThanOrEqual(5)
+  })
+
+  it('upgrades a planet when reinforcements push it to the threshold', () => {
+    const state = createMatch(config)
+    const source = state.planets.find((p) => p.owner === 0)!
+    const target = state.planets.find((p) => p.owner === -1)!
+    target.owner = 0
+    target.units = 28
+    target.level = 1
+    const regenBefore = target.regen
+    const capBefore = target.cap
+    const radiusBefore = target.radius
+    source.units = 12
+    issueSend(state, [source.id], target.id, 0, createRng('fx')) // sends 6
+    for (let i = 0; i < 30 * 60 && state.particles.length > 0; i++) {
+      stepSimulation(state, SIM_DT)
+    }
+    expect(target.level).toBe(2)
+    expect(target.regen).toBeCloseTo(regenBefore * 2)
+    expect(target.cap).toBeGreaterThan(capBefore)
+    expect(target.radius).toBeGreaterThan(radiusBefore)
+    // 28 + reinforcements reached 30 → upgrade consumed 30; leftovers + regen remain small
+    expect(target.units).toBeLessThan(15)
+  })
+
+  it('does not upgrade twice past max level', () => {
+    const state = createMatch(config)
+    const source = state.planets.find((p) => p.owner === 0)!
+    const target = state.planets.find((p) => p.owner === -1)!
+    target.owner = 0
+    target.units = 29
+    target.level = 2
+    const regenBefore = target.regen
+    source.units = 20
+    issueSend(state, [source.id], target.id, 0, createRng('fx'))
+    for (let i = 0; i < 30 * 60 && state.particles.length > 0; i++) {
+      stepSimulation(state, SIM_DT)
+    }
+    expect(target.level).toBe(2)
+    expect(target.regen).toBe(regenBefore)
   })
 
   it('detects victory when human owns everything and no enemy fleets fly', () => {

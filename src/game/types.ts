@@ -26,6 +26,7 @@ export interface Planet {
   units: number
   cap: number
   regen: number
+  level: number
 }
 
 export interface FleetParticle {
@@ -50,8 +51,9 @@ export interface Shockwave {
   y: number
   owner: Owner
   age: number
-  // 'capture' expands outward (default); 'ping' contracts onto a send target
-  kind?: 'capture' | 'ping'
+  // 'capture' expands outward (default); 'ping' contracts onto a send
+  // target; 'upgrade' is a double expanding ring on a leveled-up planet
+  kind?: 'capture' | 'ping' | 'upgrade'
   // target planet radius, used by 'ping' to scale the contraction
   radius?: number
 }

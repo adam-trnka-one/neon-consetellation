@@ -36,13 +36,30 @@ function HowToPlayPage() {
 
       <Section title="Planets & units">
         <ul className="list-disc space-y-1 pl-5">
-          <li>Planets come in three sizes — bigger planets hold more units and regenerate faster.</li>
-          <li>Planets you own regenerate units up to their cap. Neutral (gray) planets don't.</li>
+          <li>Planets come in three sizes — bigger planets can store more units.</li>
+          <li>
+            Planets you own produce <strong>1 unit per second</strong> up to their cap. Neutral
+            (gray) planets don't produce.
+          </li>
           <li>Sending a fleet launches <strong>half</strong> of the source planet's units.</li>
           <li>
             On arrival, friendly units reinforce; enemy units subtract one-for-one. If the
             defenders hit zero, the planet is captured by the leftover attackers.
           </li>
+        </ul>
+      </Section>
+
+      <Section title="Upgrading planets">
+        <ul className="list-disc space-y-1 pl-5">
+          <li>
+            Send units to one of your own planets to invest in it. When it reaches{' '}
+            <strong>30 units</strong>, they're consumed and the planet upgrades.
+          </li>
+          <li>
+            An upgraded planet grows, produces units <strong>twice as fast</strong>, and stores
+            more — it wears a ring in your color.
+          </li>
+          <li>Captured planets keep their upgrade — fight for them!</li>
         </ul>
       </Section>
 
@@ -52,7 +69,7 @@ function HowToPlayPage() {
           <li>Shift/Ctrl-click to add planets to the selection, or drag a box on empty space.</li>
           <li>Click any other planet to launch from everything selected (your own planets get reinforced).</li>
           <li>Drag from one of your planets onto a target to send directly.</li>
-          <li>Scroll wheel to zoom in and out at the cursor.</li>
+          <li>Scroll wheel to zoom at the cursor; drag with the middle or right button to pan.</li>
           <li>ESC or click empty space to deselect.</li>
         </ul>
       </Section>
@@ -60,9 +77,9 @@ function HowToPlayPage() {
       <Section title="Touch controls">
         <ul className="list-disc space-y-1 pl-5">
           <li>Tap one of your planets to select it, then tap a target to send.</li>
-          <li>Hold briefly, then drag to box-select multiple planets.</li>
+          <li>Drag on empty space to box-select multiple planets.</li>
           <li>Drag from your planet onto a target to send directly.</li>
-          <li>Pinch to zoom; drag on empty space to pan when zoomed in.</li>
+          <li>Pinch to zoom; move both fingers to pan.</li>
           <li>Tap empty space to deselect.</li>
         </ul>
       </Section>

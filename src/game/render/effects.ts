@@ -19,6 +19,22 @@ export function drawShockwave(ctx: CanvasRenderingContext2D, effect: Shockwave):
     ctx.globalAlpha = 1
     return
   }
+  if (effect.kind === 'upgrade') {
+    // celebratory double ring expanding from the leveled-up planet
+    const progress = Math.min(effect.age / SHOCKWAVE_LIFE, 1)
+    const base = effect.radius ?? 24
+    ctx.strokeStyle = ownerColor(effect.owner)
+    ctx.globalAlpha = (1 - progress) * 0.9
+    ctx.lineWidth = 2.5
+    for (const lag of [0, 0.18]) {
+      const p = Math.max(progress - lag, 0)
+      ctx.beginPath()
+      ctx.arc(effect.x, effect.y, base * (1 + p * 1.6), 0, Math.PI * 2)
+      ctx.stroke()
+    }
+    ctx.globalAlpha = 1
+    return
+  }
   const progress = Math.min(effect.age / SHOCKWAVE_LIFE, 1)
   const radius = 20 + progress * 90
   ctx.strokeStyle = ownerColor(effect.owner)

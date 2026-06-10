@@ -73,6 +73,16 @@ export function render(
     ctx.beginPath()
     ctx.arc(planet.x, planet.y, planet.radius * 0.72, 0, Math.PI * 2)
     ctx.fill()
+    if (planet.level > 1) {
+      // upgraded planets wear a thin ring in their owner's color
+      ctx.strokeStyle = ownerColor(planet.owner)
+      ctx.globalAlpha = 0.85
+      ctx.lineWidth = 1.5
+      ctx.beginPath()
+      ctx.arc(planet.x, planet.y, planet.radius * 0.85, 0, Math.PI * 2)
+      ctx.stroke()
+      ctx.globalAlpha = 1
+    }
     ctx.fillStyle = '#f1f5f9'
     ctx.font = `600 ${Math.max(13, planet.radius * 0.62)}px "Space Grotesk", sans-serif`
     ctx.textAlign = 'center'

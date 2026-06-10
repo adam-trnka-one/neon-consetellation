@@ -1,16 +1,25 @@
 import type { MapSize, PlanetSize } from './types'
 
+// every planet produces 1 unit/s at level 1; size affects capacity & garrison
 export const PLANET_STATS: Record<PlanetSize, { cap: number; regen: number; radius: number }> = {
-  small: { cap: 20, regen: 0.6, radius: 16 },
-  medium: { cap: 40, regen: 1.1, radius: 24 },
-  large: { cap: 80, regen: 2.0, radius: 34 },
+  small: { cap: 20, regen: 1.0, radius: 16 },
+  medium: { cap: 40, regen: 1.0, radius: 24 },
+  large: { cap: 80, regen: 1.0, radius: 34 },
 }
 
 export const WORLD: Record<MapSize, { w: number; h: number; planets: number }> = {
-  small: { w: 1200, h: 800, planets: 12 },
-  medium: { w: 1600, h: 1000, planets: 20 },
-  large: { w: 2000, h: 1250, planets: 30 },
+  small: { w: 1200, h: 800, planets: 9 },
+  medium: { w: 1600, h: 1000, planets: 14 },
+  large: { w: 2000, h: 1250, planets: 20 },
 }
+
+// Reinforcing one of your own planets to the threshold upgrades it:
+// the units are consumed, production doubles, and the planet grows.
+export const UPGRADE_THRESHOLD = 30
+export const UPGRADE_COST = 30
+export const UPGRADE_CAP_BONUS = 30
+export const UPGRADE_RADIUS_MULT = 1.22
+export const MAX_PLANET_LEVEL = 2
 
 // world units per second
 export const FLEET_SPEED = 140

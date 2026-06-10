@@ -1,3 +1,10 @@
+import {
+  MAX_PLANET_LEVEL,
+  UPGRADE_CAP_BONUS,
+  UPGRADE_COST,
+  UPGRADE_RADIUS_MULT,
+  UPGRADE_THRESHOLD,
+} from '../constants'
 import type { FleetParticle, MatchState } from '../types'
 import { checkVictory } from './victory'
 
@@ -6,6 +13,23 @@ function resolveArrival(state: MatchState, particle: FleetParticle): void {
   if (target.owner === particle.owner) {
     // reinforcing may push units above cap; regen simply stops there
     target.units += 1
+    // deliberate investment upgrades the planet: units are consumed,
+    // production doubles, capacity and radius grow
+    if (target.level < MAX_PLANET_LEVEL && target.units >= UPGRADE_THRESHOLD) {
+      target.units -= UPGRADE_COST
+      target.level += 1
+      target.regen *= 2
+      target.cap += UPGRADE_CAP_BONUS
+      target.radius *= UPGRADE_RADIUS_MULT
+      state.effects.push({
+        x: target.x,
+        y: target.y,
+        owner: target.owner,
+        age: 0,
+        kind: 'upgrade',
+        radius: target.radius,
+      })
+    }
   } else {
     target.units -= 1
     if (target.units < 0) {
