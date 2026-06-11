@@ -6,6 +6,7 @@ import { getLocalNickname, getOrCreatePlayerId, setLocalNickname } from '../../l
 import { submitScore } from '../../lib/leaderboard'
 import { leaderboardConfigured } from '../../lib/supabase'
 import { Button } from '../ui/Button'
+import { MatchCharts } from './MatchCharts'
 import { ShareCard } from './ShareCard'
 
 type SubmitState =
@@ -39,8 +40,8 @@ export function MatchEndOverlay({
   }
 
   return (
-    <div className="absolute inset-0 z-30 flex items-center justify-center overflow-y-auto bg-space-950/80 p-4 backdrop-blur-sm">
-      <div className="w-full max-w-md space-y-5 rounded-2xl border border-white/10 bg-space-900 p-6 shadow-2xl">
+    <div className="absolute inset-0 z-30 flex overflow-y-auto bg-space-950/80 p-4 backdrop-blur-sm">
+      <div className="m-auto w-full max-w-md space-y-5 rounded-2xl border border-white/10 bg-space-900 p-6 shadow-2xl">
         <div className="text-center">
           <h2
             className={`font-display text-4xl font-bold tracking-widest glow-text ${result.won ? 'text-neon-cyan' : 'text-rose-400'}`}
@@ -60,6 +61,8 @@ export function MatchEndOverlay({
         </div>
 
         <ShareCard result={result} score={score} />
+
+        <MatchCharts result={result} />
 
         {result.won && (
           <div className="rounded-xl border border-white/10 bg-space-800/60 p-4">

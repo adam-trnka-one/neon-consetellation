@@ -24,6 +24,9 @@ export function GameCanvas({
     engine.onMatchEnd = (result) => onMatchEndRef.current(result)
     onEngineRef.current(engine)
     engine.start()
+    if (import.meta.env.DEV) {
+      ;(window as unknown as Record<string, unknown>).__engine = engine
+    }
     return () => {
       engine.destroy()
       onEngineRef.current(null)

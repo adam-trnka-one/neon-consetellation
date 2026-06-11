@@ -78,9 +78,18 @@ export interface PlayerBreakdown {
   fleets: number
 }
 
+// periodic per-player snapshot for the post-match progress charts;
+// arrays are indexed in config.players order
+export interface TimelineSample {
+  t: number
+  planets: number[]
+  units: number[]
+}
+
 export interface MatchResult {
   won: boolean
   durationS: number
   breakdown: PlayerBreakdown[]
+  timeline: TimelineSample[]
   config: MatchConfig
 }

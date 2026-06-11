@@ -6,7 +6,14 @@ import { createRng, type Rng } from '../rng'
 import { issueSend } from '../sim/commands'
 import { createMatch } from '../sim/createMatch'
 import { stepSimulation } from '../sim/step'
-import type { MatchConfig, MatchResult, MatchState, MatchStatus, Planet } from '../types'
+import type {
+  MatchConfig,
+  MatchResult,
+  MatchState,
+  MatchStatus,
+  Planet,
+  TimelineSample,
+} from '../types'
 import { InputController } from './input'
 import { Viewport } from './viewport'
 
@@ -38,6 +45,10 @@ export class GameEngine {
   private accumulator = 0
   private ended = false
 
+  private timeline: TimelineSample[] = []
+  private nextSampleAt = 0
+  private sampleInterval = 1
+
   private hudListeners = new Set<() => void>()
   private hudSnapshot: HudSnapshot
   private sinceHudPublish = Infinity
@@ -66,6 +77,7 @@ export class GameEngine {
     this.ai = createAiControllers(this.state)
     this.fxRng = createRng(`${config.seed}:fx`)
     this.hudSnapshot = this.buildHudSnapshot()
+    this.recordSample()
 
     this.input = new InputController(canvas, {
       screenToWorld: (x, y) => this.viewport.screenToWorld(x, y),
@@ -128,6 +140,7 @@ export class GameEngine {
       while (this.accumulator >= SIM_DT) {
         stepSimulation(this.state, SIM_DT)
         runAi(this.state, this.ai)
+        if (this.state.elapsed >= this.nextSampleAt) this.recordSample()
         this.accumulator -= SIM_DT
       }
       // drop selections of planets lost to the enemy
@@ -156,8 +169,35 @@ export class GameEngine {
     this.raf = requestAnimationFrame(this.frame)
   }
 
-  private send(sourceIds: number[], targetId: number): void {
-    if (this.state.status !== 'running') return
+  // Periodic per-player snapshot powering the post-match progress charts.
+  // Long matches get thinned (interval doubles) to bound memory.
+  private recordSample(): void {
+    const planets: number[] = []
+    const units: number[] = []
+    for (const slot of this.state.config.players) {
+      let p = 0
+      let u = 0
+      for (const planet of this.state.planets) {
+        if (planet.owner === slot.id) {
+          p++
+          u += Math.floor(planet.units)
+        }
+      }
+      for (const particle of this.state.particles) {
+        if (particle.owner === slot.id) u++
+      }
+      planets.push(p)
+      units.push(u)
+    }
+    this.timeline.push({ t: this.state.elapsed, planets, units })
+    this.nextSampleAt = this.state.elapsed + this.sampleInterval
+    if (this.timeline.length > 600) {
+      this.timeline = this.timeline.filter((_, i) => i % 2 === 0)
+      this.sampleInterval *= 2
+    }
+  }
+
+  private send(sourceIds: number[], targetId: number): void {    if (this.state.status !== 'running') return
     const before = this.state.particles.length
     issueSend(this.state, sourceIds, targetId, 0, this.fxRng)
     if (this.state.particles.length > before) {
@@ -215,6 +255,8 @@ export class GameEngine {
   }
 
   private buildResult(): MatchResult {
+    // capture the final state as the last chart point
+    this.recordSample()
     const breakdown = this.state.config.players.map((slot) => {
       let planets = 0
       let units = 0
@@ -234,6 +276,7 @@ export class GameEngine {
       won: this.state.status === 'won',
       durationS: Math.round(this.state.elapsed),
       breakdown,
+      timeline: this.timeline,
       config: this.state.config,
     }
   }

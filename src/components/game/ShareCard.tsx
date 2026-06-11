@@ -3,7 +3,7 @@ import { ownerColor, OWNER_NAMES } from '../../game/render/palette'
 import type { MatchResult } from '../../game/types'
 import { Button } from '../ui/Button'
 
-function slotName(slot: number, kind: string, difficulty?: string): string {
+export function slotName(slot: number, kind: string, difficulty?: string): string {
   if (kind === 'human') return 'You'
   return `${OWNER_NAMES[slot]} AI (${difficulty ?? 'normal'})`
 }
