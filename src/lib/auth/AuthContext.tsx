@@ -17,6 +17,9 @@ interface AuthContextValue {
   signIn(email: string, password: string): Promise<void>
   signInWithGoogle(): Promise<void>
   signOut(): Promise<void>
+  // emails a password-reset link that lands on /reset-password
+  resetPassword(email: string): Promise<void>
+  updatePassword(password: string): Promise<void>
 }
 
 const AuthContext = createContext<AuthContextValue | null>(null)
@@ -78,6 +81,18 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     async signOut() {
       if (!supabase) return
       const { error } = await supabase.auth.signOut()
+      if (error) throw error
+    },
+    async resetPassword(email) {
+      if (!supabase) throw new Error('Accounts are not configured in this build')
+      const { error } = await supabase.auth.resetPasswordForEmail(email, {
+        redirectTo: `${window.location.origin}/reset-password`,
+      })
+      if (error) throw error
+    },
+    async updatePassword(password) {
+      if (!supabase) throw new Error('Accounts are not configured in this build')
+      const { error } = await supabase.auth.updateUser({ password })
       if (error) throw error
     },
   }

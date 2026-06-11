@@ -17,10 +17,10 @@ export const Route = createFileRoute('/login')({
 const inputClass =
   'w-full rounded-xl border border-white/15 bg-space-900 px-4 py-3 text-sm text-slate-100 placeholder:text-slate-600 focus:border-neon-cyan/60 focus:outline-none'
 
-type Mode = 'signin' | 'signup'
+type Mode = 'signin' | 'signup' | 'forgot'
 
 function LoginPage() {
-  const { user, loading, signIn, signUp, signInWithGoogle, signOut } = useAuth()
+  const { user, loading, signIn, signUp, signInWithGoogle, signOut, resetPassword } = useAuth()
   const navigate = useNavigate()
   const [mode, setMode] = useState<Mode>('signin')
   const [email, setEmail] = useState('')
@@ -48,6 +48,16 @@ function LoginPage() {
   }
 
   if (user) {
+    const sendChangePassword = async () => {
+      setError('')
+      setNotice('')
+      try {
+        await resetPassword(user.email!)
+        setNotice(`Password change link sent to ${user.email} — confirm it from your inbox.`)
+      } catch (err) {
+        setError(err instanceof Error ? err.message : 'Failed to send the link')
+      }
+    }
     return (
       <PageShell title="Account" subtitle="You're signed in.">
         <div className="space-y-6">
@@ -66,12 +76,23 @@ function LoginPage() {
               Nickname settings
             </Link>
             <button
+              onClick={sendChangePassword}
+              className="cursor-pointer rounded-full border border-white/20 px-6 py-2.5 font-display text-sm font-bold uppercase tracking-wider text-slate-200 hover:bg-white/10"
+            >
+              Change password
+            </button>
+            <button
               onClick={() => signOut().catch(() => {})}
               className="cursor-pointer rounded-full border border-white/20 px-6 py-2.5 font-display text-sm font-bold uppercase tracking-wider text-slate-200 hover:bg-white/10"
             >
               Sign out
             </button>
           </div>
+          {notice && <p className="text-sm text-neon-cyan">{notice}</p>}
+          {error && <p className="text-sm text-rose-400">{error}</p>}
+          <p className="text-xs text-slate-500">
+            Changing your password sends a confirmation link to your current email address first.
+          </p>
         </div>
       </PageShell>
     )
@@ -82,7 +103,11 @@ function LoginPage() {
     setNotice('')
     setBusy(true)
     try {
-      if (mode === 'signin') {
+      if (mode === 'forgot') {
+        await resetPassword(email)
+        setNotice(`Password reset link sent to ${email} — open it to choose a new password.`)
+        setMode('signin')
+      } else if (mode === 'signin') {
         await signIn(email, password)
         navigate({ to: '/settings' })
       } else {
@@ -157,23 +182,57 @@ function LoginPage() {
           placeholder="Email"
           className={inputClass}
         />
-        <input
-          type="password"
-          required
-          minLength={6}
-          autoComplete={mode === 'signin' ? 'current-password' : 'new-password'}
-          value={password}
-          onChange={(e) => setPassword(e.target.value)}
-          placeholder={mode === 'signin' ? 'Password' : 'Password (min. 6 characters)'}
-          className={inputClass}
-        />
+        {mode !== 'forgot' && (
+          <input
+            type="password"
+            required
+            minLength={6}
+            autoComplete={mode === 'signin' ? 'current-password' : 'new-password'}
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            placeholder={mode === 'signin' ? 'Password' : 'Password (min. 6 characters)'}
+            className={inputClass}
+          />
+        )}
         <button
           type="submit"
           disabled={busy}
           className="w-full cursor-pointer rounded-full bg-neon-cyan py-3 font-display text-sm font-bold uppercase tracking-[0.25em] text-space-950 shadow-[0_0_24px_rgba(34,211,238,0.45)] transition-colors hover:bg-cyan-300 disabled:opacity-50"
         >
-          {busy ? 'Working…' : mode === 'signin' ? 'Sign in' : 'Create account'}
+          {busy
+            ? 'Working…'
+            : mode === 'signin'
+              ? 'Sign in'
+              : mode === 'signup'
+                ? 'Create account'
+                : 'Send reset link'}
         </button>
+        {mode === 'signin' && (
+          <button
+            type="button"
+            onClick={() => {
+              setMode('forgot')
+              setError('')
+              setNotice('')
+            }}
+            className="block cursor-pointer text-sm text-slate-400 underline hover:text-slate-200"
+          >
+            Forgot password?
+          </button>
+        )}
+        {mode === 'forgot' && (
+          <p className="text-sm text-slate-500">
+            We'll email a confirmation link to your address; the new password is set after you
+            open it.{' '}
+            <button
+              type="button"
+              onClick={() => setMode('signin')}
+              className="cursor-pointer text-slate-300 underline"
+            >
+              Back to sign in
+            </button>
+          </p>
+        )}
       </form>
 
       <div className="mt-4 flex items-center gap-3 text-xs uppercase tracking-widest text-slate-600">
