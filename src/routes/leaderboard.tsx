@@ -1,11 +1,11 @@
 import { createFileRoute, useNavigate } from '@tanstack/react-router'
-import { useEffect, useMemo, useState } from 'react'
+import { useEffect, useState } from 'react'
 import { PageShell } from '../components/layout/PageShell'
 import { LeaderboardTable } from '../components/leaderboard/LeaderboardTable'
 import { NicknameSearch } from '../components/leaderboard/NicknameSearch'
 import { PlayerProfileDrawer } from '../components/leaderboard/PlayerProfileDrawer'
 import { Button } from '../components/ui/Button'
-import { getOrCreatePlayerId } from '../lib/identity'
+import { usePlayerId } from '../lib/auth/AuthContext'
 import {
   fetchMyBest,
   fetchRank,
@@ -35,10 +35,7 @@ function LeaderboardPage() {
   const search = Route.useSearch()
   const navigate = useNavigate({ from: Route.fullPath })
 
-  const myPlayerId = useMemo(
-    () => (leaderboardConfigured ? getOrCreatePlayerId() : null),
-    [],
-  )
+  const myPlayerId = usePlayerId()
 
   const [data, setData] = useState<Loaded | null>(null)
   const [error, setError] = useState<string | null>(null)

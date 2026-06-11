@@ -14,6 +14,9 @@ export function SiteFooter() {
           <Link to="/leaderboard" search={{ tab: 'single', page: 1 }} className="hover:text-slate-200">
             Leaderboard
           </Link>
+          <Link to="/login" className="hover:text-slate-200">
+            Account
+          </Link>
           <Link to="/privacy" className="hover:text-slate-200">
             Privacy
           </Link>

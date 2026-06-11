@@ -1,7 +1,8 @@
-import { createFileRoute } from '@tanstack/react-router'
+import { createFileRoute, Link } from '@tanstack/react-router'
 import { useState } from 'react'
 import { PageShell } from '../components/layout/PageShell'
-import { getLocalNickname, getOrCreatePlayerId, setLocalNickname } from '../lib/identity'
+import { useAuth, usePlayerId } from '../lib/auth/AuthContext'
+import { getLocalNickname, setLocalNickname } from '../lib/identity'
 import { updateNickname } from '../lib/leaderboard'
 import { leaderboardConfigured } from '../lib/supabase'
 
@@ -16,6 +17,8 @@ export const Route = createFileRoute('/settings')({
 })
 
 function SettingsPage() {
+  const { user } = useAuth()
+  const playerId = usePlayerId()
   const [nickname, setNickname] = useState(() => getLocalNickname())
   const [status, setStatus] = useState<'idle' | 'saving' | 'saved' | 'error'>('idle')
   const [message, setMessage] = useState('')
@@ -30,8 +33,8 @@ function SettingsPage() {
     setStatus('saving')
     try {
       setLocalNickname(name)
-      if (leaderboardConfigured) {
-        await updateNickname(getOrCreatePlayerId(), name)
+      if (leaderboardConfigured && playerId) {
+        await updateNickname(playerId, name)
       }
       setStatus('saved')
       setMessage(
@@ -50,6 +53,30 @@ function SettingsPage() {
       title="Settings"
       subtitle="Your identity is an anonymous ID stored on this device. The nickname controls how you appear on the global leaderboard."
     >
+      <div className="mb-8 rounded-2xl border border-white/10 bg-space-900/80 p-5">
+        {user ? (
+          <>
+            <p className="text-sm text-slate-400">
+              Signed in as <span className="text-slate-100">{user.email}</span> — your nickname
+              and scores follow this account on every device.
+            </p>
+            <Link to="/login" className="mt-2 inline-block text-sm text-neon-cyan underline">
+              Manage account
+            </Link>
+          </>
+        ) : (
+          <>
+            <p className="text-sm text-slate-400">
+              You're playing anonymously on this device.{' '}
+              <Link to="/login" className="text-neon-cyan underline">
+                Sign in or create an account
+              </Link>{' '}
+              to keep your scores everywhere.
+            </p>
+          </>
+        )}
+      </div>
+
       <form
         onSubmit={(e) => {
           e.preventDefault()

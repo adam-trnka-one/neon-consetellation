@@ -2,7 +2,8 @@ import { Link, useNavigate } from '@tanstack/react-router'
 import { useState } from 'react'
 import { computeScore } from '../../game/score'
 import type { MatchResult } from '../../game/types'
-import { getLocalNickname, getOrCreatePlayerId, setLocalNickname } from '../../lib/identity'
+import { usePlayerId } from '../../lib/auth/AuthContext'
+import { getLocalNickname, setLocalNickname } from '../../lib/identity'
 import { submitScore } from '../../lib/leaderboard'
 import { leaderboardConfigured } from '../../lib/supabase'
 import { Button } from '../ui/Button'
@@ -23,16 +24,18 @@ export function MatchEndOverlay({
   onRestart: () => void
 }) {
   const navigate = useNavigate()
+  const playerId = usePlayerId()
   const score = computeScore(result, result.config)
   const [nickname, setNickname] = useState(() => getLocalNickname())
   const [submit, setSubmit] = useState<SubmitState>({ phase: 'idle' })
 
   const doSubmit = async () => {
+    if (!playerId) return
     setSubmit({ phase: 'submitting' })
     try {
       const name = nickname.trim() || 'Anonymous'
       setLocalNickname(name)
-      const { rank } = await submitScore(getOrCreatePlayerId(), name, result)
+      const { rank } = await submitScore(playerId, name, result)
       setSubmit({ phase: 'done', rank, score })
     } catch (err) {
       setSubmit({ phase: 'error', message: err instanceof Error ? err.message : 'Submit failed' })

@@ -1,6 +1,7 @@
 import { createRouter, RouterProvider } from '@tanstack/react-router'
 import { StrictMode } from 'react'
 import { createRoot } from 'react-dom/client'
+import { AuthProvider } from './lib/auth/AuthContext'
 import { ConsentProvider } from './lib/consent/ConsentContext'
 import { routeTree } from './routeTree.gen'
 import './styles/index.css'
@@ -15,8 +16,10 @@ declare module '@tanstack/react-router' {
 
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
-    <ConsentProvider>
-      <RouterProvider router={router} />
-    </ConsentProvider>
+    <AuthProvider>
+      <ConsentProvider>
+        <RouterProvider router={router} />
+      </ConsentProvider>
+    </AuthProvider>
   </StrictMode>,
 )

@@ -33,6 +33,9 @@ function CookiesPage() {
         <li>
           <code>nc-consent-v1</code> — your consent choices themselves.
         </li>
+        <li>
+          <code>sb-*-auth-token</code> — your session, only if you sign in with an account.
+        </li>
       </ul>
 
       <h2>Analytics (opt-in)</h2>
