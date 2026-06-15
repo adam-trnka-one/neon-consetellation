@@ -8,6 +8,9 @@ export function SiteFooter() {
       <div className="mx-auto flex max-w-4xl flex-col items-center gap-3 sm:flex-row sm:justify-between">
         <span className="font-display text-slate-500">Neon Space</span>
         <nav className="flex flex-wrap items-center justify-center gap-x-5 gap-y-2">
+          <Link to="/studio" className="hover:text-slate-200">
+            Studio
+          </Link>
           <Link to="/how-to-play" className="hover:text-slate-200">
             How to play
           </Link>
