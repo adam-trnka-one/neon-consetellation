@@ -45,6 +45,15 @@ export function SourcePanel({ studio }: { studio: Studio }) {
           onChange={studio.selectMic}
         />
       </div>
+
+      <div className="space-y-2 border-t border-white/10 pt-4">
+        <h3 className="text-xs font-bold uppercase tracking-wider text-slate-400">Effects</h3>
+        <Toggle label="Show mouse clicks" checked={studio.showClicks} onChange={studio.toggleClicks} />
+        <p className="px-1 text-xs text-slate-500">
+          Highlights clicks made over this tab/window while recording. A browser can't see clicks
+          over other apps, so this works best when sharing this tab.
+        </p>
+      </div>
     </section>
   )
 }

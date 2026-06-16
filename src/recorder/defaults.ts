@@ -15,8 +15,8 @@ export const DEFAULT_STYLE: StageStyle = {
   camera: {
     shape: 'circle',
     size: 26,
-    position: 'bottom-left',
-    margin: 28,
+    x: 0.16,
+    y: 0.82,
     radius: 24,
     borderWidth: 3,
     borderColor: '#22d3ee',

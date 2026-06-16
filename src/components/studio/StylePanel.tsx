@@ -1,9 +1,23 @@
 import { RESOLUTIONS } from '../../recorder/defaults'
-import type { CameraPosition, CameraShape, StageBackground } from '../../recorder/types'
+import type { CameraCorner, CameraShape, StageBackground, StageStyle } from '../../recorder/types'
 import type { useStudio } from '../../recorder/useStudio'
 import { ColorField, Field, Segmented, Slider } from './controls'
 
 type Studio = ReturnType<typeof useStudio>
+
+// Compute a bubble centre (normalised) for a corner preset, accounting for the
+// current bubble size so it sits neatly inset from the stage edges.
+function cornerCenter(corner: CameraCorner, style: StageStyle): { x: number; y: number } {
+  const phFrac = style.camera.size / 100 // of stage height
+  const aspect = style.camera.shape === 'rounded' ? 16 / 9 : 1
+  const pwFrac = (phFrac * style.height * aspect) / style.width // of stage width
+  const mx = 24 / style.width
+  const my = 24 / style.height
+  return {
+    x: corner.includes('right') ? 1 - pwFrac / 2 - mx : pwFrac / 2 + mx,
+    y: corner.includes('top') ? phFrac / 2 + my : 1 - phFrac / 2 - my,
+  }
+}
 
 const BG_PRESETS: { label: string; value: StageBackground }[] = [
   { label: 'Indigo', value: { type: 'gradient', from: '#0b0b26', to: '#1e1e4f', angle: 135 } },
@@ -153,17 +167,30 @@ export function StylePanel({ studio }: { studio: Studio }) {
           ]}
           onChange={(shape) => studio.updateStyle({ camera: { ...camera, shape } })}
         />
-        <Segmented<CameraPosition>
-          label="Position"
-          value={camera.position}
-          options={[
-            { value: 'bottom-left', label: '◣' },
-            { value: 'bottom-right', label: '◢' },
-            { value: 'top-left', label: '◤' },
-            { value: 'top-right', label: '◥' },
-          ]}
-          onChange={(position) => studio.updateStyle({ camera: { ...camera, position } })}
-        />
+        <Field label="Position (drag in preview, or snap to a corner)">
+          <div className="grid grid-cols-2 gap-1.5">
+            {(
+              [
+                ['top-left', '◤ Top left'],
+                ['top-right', 'Top right ◥'],
+                ['bottom-left', '◣ Bottom left'],
+                ['bottom-right', 'Bottom right ◢'],
+              ] as [CameraCorner, string][]
+            ).map(([corner, label]) => (
+              <button
+                key={corner}
+                type="button"
+                onClick={() => {
+                  const c = cornerCenter(corner, style)
+                  studio.setCameraCenter(c.x, c.y)
+                }}
+                className="rounded-md border border-white/10 px-2 py-1.5 text-xs font-semibold text-slate-300 hover:bg-white/[0.06] hover:text-slate-100"
+              >
+                {label}
+              </button>
+            ))}
+          </div>
+        </Field>
         <Slider
           label="Size"
           value={camera.size}
@@ -171,14 +198,6 @@ export function StylePanel({ studio }: { studio: Studio }) {
           max={50}
           unit="%"
           onChange={(size) => studio.updateStyle({ camera: { ...camera, size } })}
-        />
-        <Slider
-          label="Margin"
-          value={camera.margin}
-          min={0}
-          max={160}
-          unit="px"
-          onChange={(margin) => studio.updateStyle({ camera: { ...camera, margin } })}
         />
         {camera.shape === 'rounded' && (
           <Slider

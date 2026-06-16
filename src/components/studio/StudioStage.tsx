@@ -1,3 +1,4 @@
+import { useRef, useState } from 'react'
 import { Button } from '../ui/Button'
 import { fileExtensionFor, formatBytes, formatDuration } from '../../recorder/recorder'
 import type { useStudio } from '../../recorder/useStudio'
@@ -9,13 +10,67 @@ export function StudioStage({ studio }: { studio: Studio }) {
   const recording = status === 'recording'
   const paused = status === 'paused'
 
+  const draggingRef = useRef(false)
+  const [dragging, setDragging] = useState(false)
+  const [hovering, setHovering] = useState(false)
+
+  // Map a pointer event to normalised stage coordinates (0..1).
+  function normPoint(e: React.PointerEvent<HTMLCanvasElement>) {
+    const rect = e.currentTarget.getBoundingClientRect()
+    return {
+      nx: (e.clientX - rect.left) / rect.width,
+      ny: (e.clientY - rect.top) / rect.height,
+    }
+  }
+
+  function overCamera(e: React.PointerEvent<HTMLCanvasElement>, nx: number, ny: number) {
+    const r = studio.getCameraRect()
+    if (!r) return false
+    const px = nx * e.currentTarget.width
+    const py = ny * e.currentTarget.height
+    return px >= r.x && px <= r.x + r.w && py >= r.y && py <= r.y + r.h
+  }
+
+  function onPointerDown(e: React.PointerEvent<HTMLCanvasElement>) {
+    if (!studio.sources.camera) return
+    const { nx, ny } = normPoint(e)
+    if (overCamera(e, nx, ny)) {
+      draggingRef.current = true
+      setDragging(true)
+      e.currentTarget.setPointerCapture(e.pointerId)
+      studio.setCameraCenter(nx, ny)
+    }
+  }
+
+  function onPointerMove(e: React.PointerEvent<HTMLCanvasElement>) {
+    const { nx, ny } = normPoint(e)
+    if (draggingRef.current) {
+      studio.setCameraCenter(nx, ny)
+    } else {
+      setHovering(studio.sources.camera && overCamera(e, nx, ny))
+    }
+  }
+
+  function onPointerUp(e: React.PointerEvent<HTMLCanvasElement>) {
+    if (draggingRef.current) {
+      draggingRef.current = false
+      setDragging(false)
+      e.currentTarget.releasePointerCapture(e.pointerId)
+    }
+  }
+
+  const cursor = dragging ? 'grabbing' : hovering ? 'grab' : 'default'
+
   return (
     <div className="space-y-4">
       <div className="relative overflow-hidden rounded-2xl border border-white/10 bg-black/40">
         <canvas
           ref={studio.canvasRef}
-          className="block w-full"
-          style={{ aspectRatio: `${style.width} / ${style.height}` }}
+          onPointerDown={onPointerDown}
+          onPointerMove={onPointerMove}
+          onPointerUp={onPointerUp}
+          className="block w-full touch-none select-none"
+          style={{ aspectRatio: `${style.width} / ${style.height}`, cursor }}
         />
         {(recording || paused) && (
           <div className="absolute left-4 top-4 flex items-center gap-2 rounded-full bg-black/60 px-3 py-1.5 text-sm font-semibold backdrop-blur">
@@ -29,6 +84,10 @@ export function StudioStage({ studio }: { studio: Studio }) {
           </div>
         )}
       </div>
+
+      {studio.sources.camera && (
+        <p className="text-xs text-slate-500">Tip: drag the camera bubble in the preview to reposition it.</p>
+      )}
 
       {studio.error && (
         <p className="rounded-lg border border-rose-400/40 bg-rose-500/10 px-3 py-2 text-sm text-rose-300">

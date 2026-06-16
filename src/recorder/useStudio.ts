@@ -57,6 +57,7 @@ export function useStudio() {
   const [elapsedMs, setElapsedMs] = useState(0)
   const [result, setResult] = useState<RecordingResult | null>(null)
   const [error, setError] = useState<string | null>(null)
+  const [showClicks, setShowClicks] = useState(false)
 
   // Keep the live compositor in sync with style edits.
   const styleRef = useRef(style)
@@ -249,6 +250,40 @@ export function useStudio() {
     setStyleState((prev) => ({ ...prev, ...patch }))
   }, [])
 
+  const toggleClicks = useCallback(() => setShowClicks((v) => !v), [])
+
+  // Visualise clicks that land over this tab/window. A browser can only see
+  // pointer events on its own surface, so this reflects clicks while sharing
+  // this tab — it cannot observe clicks over other applications.
+  useEffect(() => {
+    if (!showClicks) return
+    const onDown = (e: PointerEvent) => {
+      const nx = e.clientX / window.innerWidth
+      const ny = e.clientY / window.innerHeight
+      compositorRef.current?.addClick(nx, ny)
+    }
+    window.addEventListener('pointerdown', onDown)
+    return () => window.removeEventListener('pointerdown', onDown)
+  }, [showClicks])
+
+  const getCameraRect = useCallback(() => compositorRef.current?.getCameraRect() ?? null, [])
+
+  // Move the camera bubble by its centre (normalised), clamped to the stage.
+  const setCameraCenter = useCallback((nx: number, ny: number) => {
+    setStyleState((prev) => {
+      const rect = compositorRef.current?.getCameraRect()
+      let cx = Math.min(Math.max(nx, 0), 1)
+      let cy = Math.min(Math.max(ny, 0), 1)
+      if (rect) {
+        const halfW = rect.w / 2 / prev.width
+        const halfH = rect.h / 2 / prev.height
+        cx = Math.min(Math.max(nx, halfW), 1 - halfW)
+        cy = Math.min(Math.max(ny, halfH), 1 - halfH)
+      }
+      return { ...prev, camera: { ...prev.camera, x: cx, y: cy } }
+    })
+  }, [])
+
   const hasVideoSource = sources.screen || sources.camera
 
   const startRecording = useCallback(() => {
@@ -341,14 +376,18 @@ export function useStudio() {
     elapsedMs,
     result,
     error,
+    showClicks,
     hasVideoSource,
     toggleCamera,
     toggleMic,
     toggleScreen,
     toggleSystemAudio,
+    toggleClicks,
     selectCamera,
     selectMic,
     updateStyle,
+    getCameraRect,
+    setCameraCenter,
     startRecording,
     stopRecording,
     pauseRecording,

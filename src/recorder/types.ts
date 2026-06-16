@@ -6,7 +6,7 @@ export interface MediaDevice {
 }
 
 export type CameraShape = 'circle' | 'rounded' | 'square'
-export type CameraPosition = 'bottom-left' | 'bottom-right' | 'top-left' | 'top-right'
+export type CameraCorner = 'bottom-left' | 'bottom-right' | 'top-left' | 'top-right'
 
 export type StageBackground =
   | { type: 'solid'; color: string }
@@ -25,8 +25,8 @@ export interface ScreenStyle {
 export interface CameraStyle {
   shape: CameraShape
   size: number // height as a percentage of the stage height (camera-only: ignored)
-  position: CameraPosition
-  margin: number // distance from the stage edges, px
+  x: number // bubble centre, 0..1 of stage width (drag to reposition)
+  y: number // bubble centre, 0..1 of stage height
   radius: number // corner rounding for the 'rounded' shape, px
   borderWidth: number // px
   borderColor: string
