@@ -10,6 +10,7 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as TermsRouteImport } from './routes/terms'
+import { Route as StudioRouteImport } from './routes/studio'
 import { Route as SettingsRouteImport } from './routes/settings'
 import { Route as ResetPasswordRouteImport } from './routes/reset-password'
 import { Route as PrivacyRouteImport } from './routes/privacy'
@@ -24,6 +25,11 @@ import { Route as PlayMatchRouteImport } from './routes/play/match'
 const TermsRoute = TermsRouteImport.update({
   id: '/terms',
   path: '/terms',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const StudioRoute = StudioRouteImport.update({
+  id: '/studio',
+  path: '/studio',
   getParentRoute: () => rootRouteImport,
 } as any)
 const SettingsRoute = SettingsRouteImport.update({
@@ -86,6 +92,7 @@ export interface FileRoutesByFullPath {
   '/privacy': typeof PrivacyRoute
   '/reset-password': typeof ResetPasswordRoute
   '/settings': typeof SettingsRoute
+  '/studio': typeof StudioRoute
   '/terms': typeof TermsRoute
   '/play/match': typeof PlayMatchRoute
   '/play/': typeof PlayIndexRoute
@@ -99,6 +106,7 @@ export interface FileRoutesByTo {
   '/privacy': typeof PrivacyRoute
   '/reset-password': typeof ResetPasswordRoute
   '/settings': typeof SettingsRoute
+  '/studio': typeof StudioRoute
   '/terms': typeof TermsRoute
   '/play/match': typeof PlayMatchRoute
   '/play': typeof PlayIndexRoute
@@ -113,6 +121,7 @@ export interface FileRoutesById {
   '/privacy': typeof PrivacyRoute
   '/reset-password': typeof ResetPasswordRoute
   '/settings': typeof SettingsRoute
+  '/studio': typeof StudioRoute
   '/terms': typeof TermsRoute
   '/play/match': typeof PlayMatchRoute
   '/play/': typeof PlayIndexRoute
@@ -128,6 +137,7 @@ export interface FileRouteTypes {
     | '/privacy'
     | '/reset-password'
     | '/settings'
+    | '/studio'
     | '/terms'
     | '/play/match'
     | '/play/'
@@ -141,6 +151,7 @@ export interface FileRouteTypes {
     | '/privacy'
     | '/reset-password'
     | '/settings'
+    | '/studio'
     | '/terms'
     | '/play/match'
     | '/play'
@@ -154,6 +165,7 @@ export interface FileRouteTypes {
     | '/privacy'
     | '/reset-password'
     | '/settings'
+    | '/studio'
     | '/terms'
     | '/play/match'
     | '/play/'
@@ -168,6 +180,7 @@ export interface RootRouteChildren {
   PrivacyRoute: typeof PrivacyRoute
   ResetPasswordRoute: typeof ResetPasswordRoute
   SettingsRoute: typeof SettingsRoute
+  StudioRoute: typeof StudioRoute
   TermsRoute: typeof TermsRoute
   PlayMatchRoute: typeof PlayMatchRoute
   PlayIndexRoute: typeof PlayIndexRoute
@@ -180,6 +193,13 @@ declare module '@tanstack/react-router' {
       path: '/terms'
       fullPath: '/terms'
       preLoaderRoute: typeof TermsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/studio': {
+      id: '/studio'
+      path: '/studio'
+      fullPath: '/studio'
+      preLoaderRoute: typeof StudioRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/settings': {
@@ -264,6 +284,7 @@ const rootRouteChildren: RootRouteChildren = {
   PrivacyRoute: PrivacyRoute,
   ResetPasswordRoute: ResetPasswordRoute,
   SettingsRoute: SettingsRoute,
+  StudioRoute: StudioRoute,
   TermsRoute: TermsRoute,
   PlayMatchRoute: PlayMatchRoute,
   PlayIndexRoute: PlayIndexRoute,
